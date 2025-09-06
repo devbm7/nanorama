@@ -7,7 +7,7 @@
 
 **Vision**: Create an AI-powered web application that allows marketers to generate professional infographic posters by providing raw content (text info, image descriptions), with AI handling the complete design, layout, and styling.
 
-**Tech Stack**: Next.js 14+ with TypeScript, Google GenAI (@google/genai)
+**Tech Stack**: Next.js with TypeScript, Google GenAI (@google/genai)
 
 ---
 
