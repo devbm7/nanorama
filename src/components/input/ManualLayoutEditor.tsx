@@ -13,7 +13,7 @@ export function ManualLayoutEditor() {
         {manualSlots.map((s) => (
           <div key={s.id} className="border rounded p-2 flex flex-col gap-2">
             <div className="text-xs opacity-70">Slot {s.index}</div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex flex-wrap gap-2 text-xs">
               <label className="flex items-center gap-1">X%<input className="border rounded p-1 w-16" type="number" value={s.x} onChange={(e) => updateManualSlot(s.id, { x: Number(e.target.value) })} /></label>
               <label className="flex items-center gap-1">Y%<input className="border rounded p-1 w-16" type="number" value={s.y} onChange={(e) => updateManualSlot(s.id, { y: Number(e.target.value) })} /></label>
               <label className="flex items-center gap-1">W%<input className="border rounded p-1 w-16" type="number" value={s.width} onChange={(e) => updateManualSlot(s.id, { width: Number(e.target.value) })} /></label>
