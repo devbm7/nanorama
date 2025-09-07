@@ -6,6 +6,7 @@ export function GenerateButton() {
   const { components, updateComponent } = usePosterState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debug, setDebug] = useState(false);
 
   function buildPrompt(): string {
     const sections: string[] = [];
@@ -49,7 +50,7 @@ export function GenerateButton() {
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptText, assetImage: target.assetUrl }),
+        body: JSON.stringify({ promptText, assetImage: target.assetUrl, debug }),
       });
       const data = await res.json();
       if (data.base64) {
@@ -72,6 +73,10 @@ export function GenerateButton() {
       <button className="border px-4 py-2 rounded" onClick={handleGenerate} disabled={isLoading}>
         {isLoading ? "Generating..." : "Generate Images"}
       </button>
+      <div className="flex items-center gap-2">
+        <input type="checkbox" id="debug-mode" checked={debug} onChange={(e) => setDebug(e.target.checked)} />
+        <label htmlFor="debug-mode" className="text-sm">Debug mode</label>
+      </div>
       {error && <div className="text-red-500 text-sm">{error}</div>}
     </div>
   );

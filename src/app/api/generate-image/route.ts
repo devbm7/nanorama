@@ -4,7 +4,7 @@ import { Part } from "@google/genai";
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, promptText, layoutImage, assetImage } = await req.json();
+    const { prompt, promptText, layoutImage, assetImage, debug } = await req.json();
     let systemPrompt = "You are a poster designer. You are given a layout image and an asset image. Generate a poster based on the given layout and asset. Do not add any more information that is not given in the layout or asset.";
     const effectivePrompt = promptText || prompt;
     if (!effectivePrompt && !assetImage) {
@@ -35,6 +35,9 @@ export async function POST(req: NextRequest) {
       parts.push({ inlineData: { mimeType: "image/png", data: data || assetImage } });
     }
 
+    if (debug) {
+      console.log("Image generation parts:", JSON.stringify(parts, null, 2));
+    }
     const response = await ai.models.generateContent({
       model,
       contents: [
