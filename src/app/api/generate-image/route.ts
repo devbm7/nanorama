@@ -5,7 +5,7 @@ import { Part } from "@google/genai";
 export async function POST(req: NextRequest) {
   try {
     const { prompt, promptText, layoutImage, assetImage, debug } = await req.json();
-    let systemPrompt = "You are a poster designer. You are given a layout image and an asset image. Generate a poster based on the given layout and asset. Do not add any more information that is not given in the layout or asset.";
+    let systemPrompt = "You are a poster designer. You are given a layout image and an asset image. Generate a poster based on the given layout and asset. Do not add any more information that is not given in the layout or asset. There is a layout blueprint image attached as well. Use that to guide the design. You do not have to follow the color choices of the layout, they are just there to distinguish the sections. There would also not be any space between the sections as depicted in the layout, it would be continuos.";
     const effectivePrompt = promptText || prompt;
     if (!effectivePrompt && !assetImage) {
       return NextResponse.json({ error: "Provide a prompt or an asset image" }, { status: 400 });
@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
       parts.push({ inlineData: { mimeType: "image/png", data: data || assetImage } });
     }
 
-    if (debug) {
+    const allowDebug = process.env.NODE_ENV !== "production";
+    if (debug && allowDebug) {
       return NextResponse.json({ debug: { parts } });
     }
     const response = await ai.models.generateContent({

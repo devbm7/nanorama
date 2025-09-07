@@ -2,6 +2,7 @@ import { ComponentInput } from "@/components/input/ComponentInput";
 import { LayoutSelector } from "@/components/input/LayoutSelector";
 import { GenerateButton } from "@/components/input/GenerateButton";
 import { GeneratedOnly } from "@/components/poster/GeneratedOnly";
+import { LayoutBlueprint } from "@/components/poster/LayoutBlueprint";
 import { ExportPanel } from "@/components/export/ExportPanel";
 
 export default function Home() {
@@ -23,7 +24,9 @@ export default function Home() {
             <GenerateButton />
           </div>
         </aside>
-        <div className="bg-card text-card-foreground rounded border border-border shadow p-4 space-y-2">
+        <div className="bg-card text-card-foreground rounded border border-border shadow p-4 space-y-3">
+          <h2 className="text-base font-semibold">Layout Preview</h2>
+          <LayoutBlueprint />
           <h2 className="text-base font-semibold">Generated</h2>
           <div id="poster-canvas-root">
             <GeneratedOnly />

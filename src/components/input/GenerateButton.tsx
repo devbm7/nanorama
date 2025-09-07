@@ -7,6 +7,7 @@ export function GenerateButton() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [debug, setDebug] = useState(false);
+  const ALLOW_DEBUG = process.env.NODE_ENV !== "production";
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
 
   interface DebugPart {
@@ -56,11 +57,19 @@ export function GenerateButton() {
       }
       
       const promptText = buildPrompt();
+      // capture blueprint
+      const blueprintEl = document.getElementById("layout-blueprint") as HTMLElement | null;
+      let layoutImage: string | undefined;
+      if (blueprintEl) {
+        const { default: html2canvas } = await import("html2canvas");
+        const canvas = await html2canvas(blueprintEl, { backgroundColor: "#ffffff", scale: 2, useCORS: true });
+        layoutImage = canvas.toDataURL("image/png");
+      }
 
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptText, assetImage: target.assetUrl, debug }),
+        body: JSON.stringify({ promptText, assetImage: target.assetUrl, layoutImage, debug: ALLOW_DEBUG && debug }),
       });
       const data = await res.json();
       if (data.debug) {
@@ -87,10 +96,12 @@ export function GenerateButton() {
       <button className="border px-4 py-2 rounded" onClick={handleGenerate} disabled={isLoading}>
         {isLoading ? "Generating..." : "Generate Images"}
       </button>
-      <div className="flex items-center gap-2">
-        <input type="checkbox" id="debug-mode" checked={debug} onChange={(e) => setDebug(e.target.checked)} />
-        <label htmlFor="debug-mode" className="text-sm">Debug mode</label>
-      </div>
+      {ALLOW_DEBUG && (
+        <div className="flex items-center gap-2">
+          <input type="checkbox" id="debug-mode" checked={debug} onChange={(e) => setDebug(e.target.checked)} />
+          <label htmlFor="debug-mode" className="text-sm">Debug mode</label>
+        </div>
+      )}
       {error && <div className="text-red-500 text-sm">{error}</div>}
       {debugInfo && (
         <div className="mt-4 p-4 border rounded bg-gray-100 text-gray-800 text-sm overflow-auto max-h-60">
