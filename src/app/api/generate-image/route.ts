@@ -40,6 +40,9 @@ export async function POST(req: NextRequest) {
           parts,
         },
       ],
+      config: {
+        temperature: 0.5,
+      },
     });
 
     const part = response.candidates?.[0]?.content?.parts?.find((p: Part) => p.inlineData);
