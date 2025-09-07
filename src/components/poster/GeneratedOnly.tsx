@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { usePosterState } from "@/hooks/usePosterState";
 
 export function GeneratedOnly() {
@@ -15,11 +16,9 @@ export function GeneratedOnly() {
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden bg-white flex items-center justify-center">
+    <div className="border rounded-lg overflow-hidden bg-background flex items-center justify-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={target.generatedUrl} alt="Generated" className="max-w-full max-h-[70vh] object-contain" />
     </div>
   );
 }
-
-

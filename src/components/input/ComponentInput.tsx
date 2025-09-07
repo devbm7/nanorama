@@ -37,19 +37,19 @@ export function ComponentInput() {
   return (
     <div className="w-full space-y-4">
       <div className="flex gap-2">
-        <button className="border px-3 py-2 rounded" onClick={() => addImageComponent("")}>Add Image</button>
-        <button className="border px-3 py-2 rounded" onClick={() => addInfoCard("", [""])}>Add InfoCard</button>
+        <button className="px-3 py-2 rounded bg-secondary text-secondary-foreground" onClick={() => addImageComponent("")}>Add Image</button>
+        <button className="px-3 py-2 rounded bg-accent text-accent-foreground" onClick={() => addInfoCard("", [""])}>Add InfoCard</button>
       </div>
       <div className="space-y-3">
         {components.map((c) => (
-          <div key={c.id} className="border rounded p-3 space-y-2">
+          <div key={c.id} className="border rounded p-3 space-y-2 shadow-sm bg-card text-card-foreground">
             <div className="flex justify-between items-center">
               <div className="text-sm opacity-70">{c.type.toUpperCase()}</div>
               <button className="text-red-500 text-sm" onClick={() => removeComponent(c.id)}>Remove</button>
             </div>
             {c.type === "text" ? (
               <textarea
-                className="w-full border rounded p-2 bg-transparent"
+                className="w-full border rounded p-2 bg-background"
                 rows={3}
                 placeholder="Enter text content"
                 value={c.content}
@@ -62,13 +62,13 @@ export function ComponentInput() {
                   <input
                     type="number"
                     min={0}
-                    className="w-20 border rounded p-2 bg-transparent"
+                    className="w-20 border rounded p-2 bg-background"
                     value={c.slotIndex ?? 0}
                     onChange={(e) => updateComponent(c.id, { slotIndex: Number(e.target.value) })}
                   />
                 </div>
                 <input
-                  className="w-full border rounded p-2 bg-transparent"
+                  className="w-full border rounded p-2 bg-background"
                   placeholder="Describe the image (prompt)"
                   value={c.prompt}
                   onChange={(e) => updateComponent(c.id, { prompt: e.target.value })}
@@ -98,13 +98,13 @@ export function ComponentInput() {
                   <input
                     type="number"
                     min={0}
-                    className="w-20 border rounded p-2 bg-transparent"
+                    className="w-20 border rounded p-2 bg-background"
                     value={c.slotIndex ?? 0}
                     onChange={(e) => updateComponent(c.id, { slotIndex: Number(e.target.value) })}
                   />
                 </div>
                 <input
-                  className="w-full border rounded p-2 bg-transparent"
+                  className="w-full border rounded p-2 bg-background"
                   placeholder="Section title (optional)"
                   value={c.title || ""}
                   onChange={(e) => updateComponent(c.id, { title: e.target.value })}
@@ -113,7 +113,7 @@ export function ComponentInput() {
                   {(c.bullets || []).map((b, idx) => (
                     <div key={idx} className="flex gap-2">
                       <input
-                        className="flex-1 border rounded p-2 bg-transparent"
+                        className="flex-1 border rounded p-2 bg-background"
                         placeholder={`Bullet ${idx + 1}`}
                         value={b}
                         onChange={(e) => {
