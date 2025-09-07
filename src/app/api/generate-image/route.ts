@@ -5,6 +5,7 @@ import { Part } from "@google/genai";
 export async function POST(req: NextRequest) {
   try {
     const { prompt, promptText, layoutImage, assetImage } = await req.json();
+    let systemPrompt = "You are a poster designer. You are given a layout image and an asset image. Generate a poster based on the given layout and asset. Do not add any more information that is not given in the layout or asset.";
     const effectivePrompt = promptText || prompt;
     if (!effectivePrompt && !assetImage) {
       return NextResponse.json({ error: "Provide a prompt or an asset image" }, { status: 400 });
@@ -22,7 +23,9 @@ export async function POST(req: NextRequest) {
     }
 
     const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [];
-    if (effectivePrompt) parts.push({ text: effectivePrompt });
+    // parts.push({ text: systemPrompt });
+    if (effectivePrompt) systemPrompt += "\n\n" + effectivePrompt;
+    parts.push({ text: systemPrompt });
     if (layoutImage && typeof layoutImage === "string") {
       const [, data] = layoutImage.split(",");
       parts.push({ inlineData: { mimeType: "image/png", data: data || layoutImage } });
