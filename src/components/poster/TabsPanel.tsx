@@ -7,8 +7,7 @@ import { usePosterState } from "@/hooks/usePosterState";
 export function TabsPanel() {
   const { components } = usePosterState();
   const hasGenerated = useMemo(() => {
-    const imgs = components.filter((c: any) => c.type === "image") as any[];
-    return imgs.some((c) => Boolean(c.generatedUrl));
+    return components.some((c) => c.type === "image" && c.generatedUrl);
   }, [components]);
 
   const [tab, setTab] = useState<"layout" | "generated">("layout");

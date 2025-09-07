@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { usePosterState } from "@/hooks/usePosterState";
+import type { PosterComponent, PosterImageComponent, PosterInfoCardComponent, ManualSlotRect, LayoutTemplateId } from "@/types/poster";
 
 export function GenerateButton() {
   const { components, updateComponent } = usePosterState();
@@ -20,11 +21,13 @@ export function GenerateButton() {
 
   function buildPrompt(): string {
     const sections: string[] = [];
-    const currentLayout = usePosterState.getState().layout;
+    const currentLayout: LayoutTemplateId = usePosterState.getState().layout as LayoutTemplateId;
     sections.push(`Layout: ${currentLayout}`);
     // Image by slot (use the exact slot numbers set in the UI)
-    const images = components.filter((c) => c.type === "image");
-    const primaryImage = images.find((c: any) => c.assetUrl) || (images[0] as any);
+    const isImage = (c: PosterComponent): c is PosterImageComponent => c.type === "image";
+    const isInfoCard = (c: PosterComponent): c is PosterInfoCardComponent => c.type === "infoCard";
+    const images: PosterImageComponent[] = components.filter(isImage);
+    const primaryImage: PosterImageComponent | undefined = images.find((c) => Boolean(c.assetUrl)) || images[0];
     if (primaryImage) {
       const slotNumber = primaryImage.slotIndex ?? 0;
       sections.push(`Slot ${slotNumber} contains the image asset. Place the asset image in Slot ${slotNumber}.`);
@@ -33,7 +36,7 @@ export function GenerateButton() {
       }
     }
     // InfoCards by slot (use the exact slot numbers set in the UI)
-    const infoCards = components.filter((c) => c.type === "infoCard") as any[];
+    const infoCards: PosterInfoCardComponent[] = components.filter(isInfoCard);
     infoCards.sort((a, b) => (a.slotIndex ?? 0) - (b.slotIndex ?? 0));
     infoCards.forEach((card, idx) => {
       const slotNumber = card.slotIndex ?? idx;
@@ -46,13 +49,8 @@ export function GenerateButton() {
     });
     // Manual layout geometry (percent rectangles)
     if (currentLayout === "manual") {
-      const slots = (usePosterState.getState().manualSlots || []).slice().sort((a, b) => a.index - b.index);
-      // if (slots.length) {
-      //   sections.push("Manual layout slots (percentages):");
-      //   slots.forEach((s) => {
-      //     sections.push(`Slot ${s.index}: x=${s.x}%, y=${s.y}%, w=${s.width}%, h=${s.height}%`);
-      //   });
-      // }
+      const slots: ManualSlotRect[] = (usePosterState.getState().manualSlots || []).slice().sort((a, b) => a.index - b.index);
+      // Keeping geometry implicit via blueprint image; uncomment to send text geometry too.
     }
     // Include plain text components (optional future)
     return sections.join("\n");
@@ -63,12 +61,13 @@ export function GenerateButton() {
     setError(null);
     setDebugInfo(null);
     try {
-      const imageComponents = components.filter((c) => c.type === "image");
+      const isImage2 = (c: PosterComponent): c is PosterImageComponent => c.type === "image";
+      const imageComponents: PosterImageComponent[] = components.filter(isImage2);
       if (imageComponents.length === 0) {
         setError("Add an Image component and upload an image.");
         return;
       }
-      const target = imageComponents.find((c: any) => c.assetUrl) || (imageComponents[0] as any);
+      const target: PosterImageComponent = imageComponents.find((c) => Boolean(c.assetUrl)) || imageComponents[0];
       if (!target.assetUrl) {
         setError("Please upload an image asset in the Image component.");
         return;
@@ -78,7 +77,7 @@ export function GenerateButton() {
       // capture blueprint using canvas util to avoid CSS color parsing issues
       const { renderBlueprintToDataUrl } = await import("@/lib/poster/blueprintCanvas");
       const state = usePosterState.getState();
-      const layoutImage = renderBlueprintToDataUrl(state.layout as any, state.manualSlots as any);
+      const layoutImage = renderBlueprintToDataUrl(state.layout as LayoutTemplateId, state.manualSlots as ManualSlotRect[]);
 
       const res = await fetch("/api/generate-image", {
         method: "POST",
@@ -136,7 +135,7 @@ export function GenerateButton() {
                     )}
                   </div>
                 ));
-              } catch (_e) {
+              } catch {
                 return debugInfo; // Fallback to raw string if parsing fails
               }
             })()}

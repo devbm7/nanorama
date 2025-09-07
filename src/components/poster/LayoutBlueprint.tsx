@@ -1,10 +1,15 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { usePosterState } from "@/hooks/usePosterState";
+import type { ManualSlotRect } from "@/types/poster";
 import { nanoid } from "nanoid";
 
 export function LayoutBlueprint() {
-  const { layout, manualSlots, addManualSlot } = usePosterState() as any;
+  const { layout, manualSlots, addManualSlot } = usePosterState() as unknown as {
+    layout: string;
+    manualSlots: ManualSlotRect[];
+    addManualSlot: (slot: ManualSlotRect) => void;
+  };
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [start, setStart] = useState<{ x: number; y: number } | null>(null);
@@ -112,7 +117,7 @@ export function LayoutBlueprint() {
           setStart(null);
           setCurr(null);
           if (width < 1 || height < 1) return; // ignore tiny drags
-          const nextIndex = (manualSlots || []).reduce((m: number, s: any) => Math.max(m, s.index), -1) + 1;
+          const nextIndex = (manualSlots || []).reduce((m, s) => Math.max(m, s.index), -1) + 1;
           addManualSlot({ id: nanoid(), index: nextIndex, x, y, width, height });
         };
         const preview = (() => {
@@ -127,7 +132,7 @@ export function LayoutBlueprint() {
               className={common + " absolute pointer-events-none"}
               style={{ left: `${left}%`, top: `${top}%`, width: `${w}%`, height: `${h}%`, borderColor: color }}
             >
-              <span className="opacity-80" style={{ color: "var(--foreground)" }}>Slot {(manualSlots || []).reduce((m: number, s: any) => Math.max(m, s.index), -1) + 1}</span>
+              <span className="opacity-80" style={{ color: "var(--foreground)" }}>Slot {(manualSlots || []).reduce((m, s) => Math.max(m, s.index), -1) + 1}</span>
             </div>
           );
         })();
