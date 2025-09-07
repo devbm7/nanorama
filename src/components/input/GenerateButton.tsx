@@ -7,6 +7,15 @@ export function GenerateButton() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [debug, setDebug] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<string | null>(null);
+
+  interface DebugPart {
+    text?: string;
+    inlineData?: {
+      mimeType: string;
+      data: string;
+    };
+  }
 
   function buildPrompt(): string {
     const sections: string[] = [];
@@ -33,6 +42,7 @@ export function GenerateButton() {
   async function handleGenerate() {
     setIsLoading(true);
     setError(null);
+    setDebugInfo(null);
     try {
       const imageComponents = components.filter((c) => c.type === "image");
       if (imageComponents.length === 0) {
@@ -53,6 +63,10 @@ export function GenerateButton() {
         body: JSON.stringify({ promptText, assetImage: target.assetUrl, debug }),
       });
       const data = await res.json();
+      if (data.debug) {
+        setDebugInfo(JSON.stringify(data.debug, null, 2));
+        return;
+      }
       if (data.base64) {
         const url = `data:${data.mimeType || "image/png"};base64,${data.base64}`;
         updateComponent(target.id, { generatedUrl: url });
@@ -78,6 +92,32 @@ export function GenerateButton() {
         <label htmlFor="debug-mode" className="text-sm">Debug mode</label>
       </div>
       {error && <div className="text-red-500 text-sm">{error}</div>}
+      {debugInfo && (
+        <div className="mt-4 p-4 border rounded bg-gray-100 text-gray-800 text-sm overflow-auto max-h-60">
+          <h3 className="font-semibold mb-2">Debug Information (Prompt Parts):</h3>
+          <pre className="whitespace-pre-wrap break-words">
+            {(() => {
+              try {
+                const parsedDebugInfo = JSON.parse(debugInfo);
+                return parsedDebugInfo.parts.map((part: DebugPart, index: number) => (
+                  <div key={index} className="mb-2">
+                    {part.text && <p><strong>Text:</strong> {part.text}</p>}
+                    {part.inlineData && (
+                      <div>
+                        <strong>Image ({part.inlineData.mimeType}):</strong>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`} alt="Debug Image" className="max-w-full h-auto border" />
+                      </div>
+                    )}
+                  </div>
+                ));
+              } catch (_e) {
+                return debugInfo; // Fallback to raw string if parsing fails
+              }
+            })()}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }

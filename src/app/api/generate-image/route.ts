@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (debug) {
-      console.log("Image generation parts:", JSON.stringify(parts, null, 2));
+      return NextResponse.json({ debug: { parts } });
     }
     const response = await ai.models.generateContent({
       model,
