@@ -14,7 +14,7 @@ export function GenerateButton() {
     // Optionally include layout id
     sections.push(`Layout: ${usePosterState.getState().layout}`);
     // InfoCards by slot
-    const infoCards = components.filter((c: any) => c.type === "infoCard") as any[];
+    const infoCards = components.filter((c) => c.type === "infoCard");
     infoCards.sort((a, b) => (a.slotIndex ?? 0) - (b.slotIndex ?? 0));
     infoCards.forEach((card, idx) => {
       const slotLabel = `Section ${card.slotIndex ?? idx}`;
@@ -25,10 +25,7 @@ export function GenerateButton() {
       }
     });
     // Include plain text components
-    const textBlocks = components.filter((c: any) => c.type === "text") as any[];
-    textBlocks.forEach((t, i) => {
-      if (t.content) sections.push(`Additional Text ${i + 1}: ${t.content}`);
-    });
+    
     return sections.join("\n");
   }
 
@@ -36,7 +33,7 @@ export function GenerateButton() {
     setIsLoading(true);
     setError(null);
     try {
-      const imageComponents = components.filter((c) => c.type === "image") as any[];
+      const imageComponents = components.filter((c) => c.type === "image");
       if (imageComponents.length === 0) {
         setError("Add an Image component and upload an image.");
         return;
@@ -46,7 +43,7 @@ export function GenerateButton() {
         setError("Please upload an image asset in the Image component.");
         return;
       }
-      const [, assetBase64] = (target.assetUrl as string).split(",");
+      
       const promptText = buildPrompt();
 
       const res = await fetch("/api/generate-image", {
@@ -63,8 +60,8 @@ export function GenerateButton() {
       } else if (data.error) {
         throw new Error(data.error);
       }
-    } catch (e: any) {
-      setError(e?.message || "Failed to generate images");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to generate images");
     } finally {
       setIsLoading(false);
     }

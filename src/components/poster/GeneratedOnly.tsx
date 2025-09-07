@@ -4,13 +4,13 @@ import { usePosterState } from "@/hooks/usePosterState";
 
 export function GeneratedOnly() {
   const { components } = usePosterState();
-  const imageComponents = components.filter((c: any) => c.type === "image") as any[];
+  const imageComponents = components.filter((c) => c.type === "image");
   const target = imageComponents.find((c) => c.generatedUrl);
 
   if (!target) {
     return (
       <div className="border rounded p-8 text-sm opacity-70">
-        No generated image yet. Click "Generate Images" after uploading an image.
+        No generated image yet. Click &apos;Generate Images&apos; after uploading an image.
       </div>
     );
   }

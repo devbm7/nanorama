@@ -6,7 +6,7 @@ interface PosterActions {
   setTitle: (title: string) => void;
   setLayout: (layout: LayoutTemplateId) => void;
   setColorScheme: (scheme: string) => void;
-  addTextComponent: (content?: string) => void;
+  
   addImageComponent: (prompt?: string) => void;
   addInfoCard: (title?: string, bullets?: string[]) => void;
   updateComponent: (id: string, update: Partial<PosterComponent>) => void;
@@ -26,13 +26,7 @@ export const usePosterState = create<PosterState & PosterActions>((set) => ({
   setTitle: (title) => set({ title }),
   setLayout: (layout) => set({ layout }),
   setColorScheme: (colorScheme) => set({ colorScheme }),
-  addTextComponent: (content = "") =>
-    set((state) => ({
-      components: [
-        ...state.components,
-        { id: nanoid(), type: "text", content },
-      ],
-    })),
+  
   addImageComponent: (prompt = "") =>
     set((state) => ({
       components: [

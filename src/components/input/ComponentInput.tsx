@@ -4,7 +4,6 @@ import { usePosterState } from "@/hooks/usePosterState";
 export function ComponentInput() {
   const {
     components,
-    addTextComponent,
     addImageComponent,
     addInfoCard,
     updateComponent,
@@ -47,15 +46,7 @@ export function ComponentInput() {
               <div className="text-sm opacity-70">{c.type.toUpperCase()}</div>
               <button className="text-red-500 text-sm" onClick={() => removeComponent(c.id)}>Remove</button>
             </div>
-            {c.type === "text" ? (
-              <textarea
-                className="w-full border rounded p-2 bg-background"
-                rows={3}
-                placeholder="Enter text content"
-                value={c.content}
-                onChange={(e) => updateComponent(c.id, { content: e.target.value })}
-              />
-            ) : c.type === "image" ? (
+            { c.type === "image" ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <label className="text-sm opacity-70">Slot</label>
@@ -119,14 +110,14 @@ export function ComponentInput() {
                         onChange={(e) => {
                           const next = [...(c.bullets || [])];
                           next[idx] = e.target.value;
-                          updateComponent(c.id, { bullets: next } as any);
+                          updateComponent(c.id, { bullets: next });
                         }}
                       />
                       <button
                         className="border px-2 rounded"
                         onClick={() => {
                           const next = (c.bullets || []).filter((_, i) => i !== idx);
-                          updateComponent(c.id, { bullets: next } as any);
+                          updateComponent(c.id, { bullets: next });
                         }}
                       >
                         Remove
@@ -135,7 +126,7 @@ export function ComponentInput() {
                   ))}
                   <button
                     className="border px-3 py-1 rounded"
-                    onClick={() => updateComponent(c.id, { bullets: [...(c.bullets || []), ""] } as any)}
+                    onClick={() => updateComponent(c.id, { bullets: [...(c.bullets || []), ""] })}
                   >
                     Add bullet
                   </button>

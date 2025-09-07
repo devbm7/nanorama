@@ -1,11 +1,6 @@
-export type PosterComponentType = "text" | "image";
+export type PosterComponentType = "image";
 
-export interface PosterTextComponent {
-  id: string;
-  type: "text";
-  content: string;
-  slotIndex?: number;
-}
+
 
 export interface PosterImageComponent {
   id: string;
@@ -27,7 +22,6 @@ export interface PosterInfoCardComponent {
 }
 
 export type PosterComponent =
-  | PosterTextComponent
   | PosterImageComponent
   | PosterInfoCardComponent;
 

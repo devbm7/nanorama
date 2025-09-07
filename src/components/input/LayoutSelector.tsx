@@ -14,7 +14,7 @@ const layouts: { id: LayoutTemplateId; label: string }[] = [
 ];
 
 export function LayoutSelector() {
-  const { layout, setLayout, components, updateComponent } = usePosterState();
+  const { layout, setLayout } = usePosterState();
   return (
     <div className="flex gap-2 flex-wrap">
       {layouts.map((l) => (

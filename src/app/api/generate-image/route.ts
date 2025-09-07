@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGenAIClient } from "@/lib/genai/client";
+import { Part } from "@google/genai";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const parts: any[] = [];
+    const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [];
     if (effectivePrompt) parts.push({ text: effectivePrompt });
     if (layoutImage && typeof layoutImage === "string") {
       const [, data] = layoutImage.split(",");
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
       ],
     });
 
-    const part = response.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData);
+    const part = response.candidates?.[0]?.content?.parts?.find((p: Part) => p.inlineData);
     if (!part?.inlineData?.data) {
       // Graceful fallback: if user provided an asset image, return it so UI shows something
       if (assetImage && typeof assetImage === "string") {
@@ -52,8 +53,8 @@ export async function POST(req: NextRequest) {
     }
     const imageBase64 = part.inlineData.data as string;
     return NextResponse.json({ base64: imageBase64, mimeType: part.inlineData.mimeType || "image/png" });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || "Generation failed" }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : "Generation failed" }, { status: 500 });
   }
 }
 

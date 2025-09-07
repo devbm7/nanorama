@@ -19,14 +19,14 @@ function SplitVertical({ components }: LayoutProps) {
     <div className="w-full h-full grid grid-cols-2 gap-4 p-6">
       <div className="space-y-4">
         {components
-          .filter((c: any) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 2 === 0))
+          .filter((c) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 2 === 0))
           .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
       <div className="space-y-4">
         {components
-          .filter((c: any) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 2 === 1))
+          .filter((c) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 2 === 1))
           .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
@@ -40,14 +40,14 @@ function SplitHorizontal({ components }: LayoutProps) {
     <div className="w-full h-full grid grid-rows-2 gap-4 p-6">
       <div className="space-y-4">
         {components
-          .filter((c: any) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 2 === 0))
+          .filter((c) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 2 === 0))
           .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
       <div className="space-y-4">
         {components
-          .filter((c: any) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 2 === 1))
+          .filter((c) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 2 === 1))
           .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
@@ -62,7 +62,7 @@ function TripleColumn({ components }: LayoutProps) {
       {[0, 1, 2].map((col) => (
         <div key={col} className="space-y-4">
           {components
-            .filter((c: any) => c.slotIndex === col || (c.slotIndex == null && components.indexOf(c) % 3 === col))
+            .filter((c) => c.slotIndex === col || (c.slotIndex == null && components.indexOf(c) % 3 === col))
             .map((c) => (
             <ComponentRenderer key={c.id} component={c} />
           ))}
@@ -73,7 +73,7 @@ function TripleColumn({ components }: LayoutProps) {
 }
 
 function HeaderDual({ components }: LayoutProps) {
-  const header = (components as any[]).find((c) => c.slotIndex === 0) || components[0];
+  const header = components.find((c) => c.slotIndex === 0) || components[0];
   const rest = components.filter((c) => c !== header);
   return (
     <div className="w-full h-full grid grid-rows-[2fr_3fr] gap-4 p-6">
@@ -93,7 +93,7 @@ function Grid2x2({ components }: LayoutProps) {
       {[0, 1, 2, 3].map((slot) => (
         <div key={slot}>
           {components
-            .filter((c: any) => c.slotIndex === slot || (c.slotIndex == null && components.indexOf(c) === slot))
+            .filter((c) => c.slotIndex === slot || (c.slotIndex == null && components.indexOf(c) === slot))
             .map((c) => (
               <ComponentRenderer key={c.id} component={c} />
             ))}
@@ -108,14 +108,14 @@ function HeroSidebar({ components }: LayoutProps) {
     <div className="w-full h-full grid grid-cols-[2fr_1fr] gap-4 p-6">
       <div className="space-y-4">
         {components
-          .filter((c: any) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 3 !== 2))
+          .filter((c) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 3 !== 2))
           .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
       <div className="space-y-4">
         {components
-          .filter((c: any) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 3 === 2))
+          .filter((c) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 3 === 2))
           .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
@@ -125,13 +125,7 @@ function HeroSidebar({ components }: LayoutProps) {
 }
 
 export function ComponentRenderer({ component }: { component: PosterComponent }) {
-  if (component.type === "text") {
-    return (
-      <div className="border rounded p-4">
-        <p className="whitespace-pre-wrap text-sm sm:text-base">{component.content || "(Empty text)"}</p>
-      </div>
-    );
-  }
+  
   if (component.type === "infoCard") {
     return (
       <div className="border rounded p-4 space-y-2">
