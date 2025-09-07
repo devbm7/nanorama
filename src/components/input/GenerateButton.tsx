@@ -20,23 +20,31 @@ export function GenerateButton() {
 
   function buildPrompt(): string {
     const sections: string[] = [];
-    sections.push("Generate a marketing poster for the given content.");
-    sections.push("Use the selected layout and place the content accordingly.");
     // Optionally include layout id
     sections.push(`Layout: ${usePosterState.getState().layout}`);
-    // InfoCards by slot
-    const infoCards = components.filter((c) => c.type === "infoCard");
+    // Image by slot (use the exact slot numbers set in the UI)
+    const images = components.filter((c) => c.type === "image");
+    const primaryImage = images.find((c: any) => c.assetUrl) || (images[0] as any);
+    if (primaryImage) {
+      const slotNumber = primaryImage.slotIndex ?? 0;
+      sections.push(`Slot ${slotNumber} contains the image asset. Place the asset image in Slot ${slotNumber}.`);
+      if (primaryImage.prompt) {
+        sections.push(`Image guidance: ${primaryImage.prompt}`);
+      }
+    }
+    // InfoCards by slot (use the exact slot numbers set in the UI)
+    const infoCards = components.filter((c) => c.type === "infoCard") as any[];
     infoCards.sort((a, b) => (a.slotIndex ?? 0) - (b.slotIndex ?? 0));
     infoCards.forEach((card, idx) => {
-      const slotLabel = `Section ${card.slotIndex ?? idx}`;
+      const slotNumber = card.slotIndex ?? idx;
+      const slotLabel = `Slot ${slotNumber}`;
       if (card.title) sections.push(`${slotLabel} Title: ${card.title}`);
       if (card.bullets && card.bullets.length) {
         sections.push(`${slotLabel} Bullets:`);
         card.bullets.filter(Boolean).forEach((b: string) => sections.push(`- ${b}`));
       }
     });
-    // Include plain text components
-    
+    // Include plain text components (optional future)
     return sections.join("\n");
   }
 
@@ -50,7 +58,7 @@ export function GenerateButton() {
         setError("Add an Image component and upload an image.");
         return;
       }
-      const target = imageComponents.find((c) => c.assetUrl) || imageComponents[0];
+      const target = imageComponents.find((c: any) => c.assetUrl) || (imageComponents[0] as any);
       if (!target.assetUrl) {
         setError("Please upload an image asset in the Image component.");
         return;

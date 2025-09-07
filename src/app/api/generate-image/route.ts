@@ -5,7 +5,7 @@ import { Part } from "@google/genai";
 export async function POST(req: NextRequest) {
   try {
     const { prompt, promptText, layoutImage, assetImage, debug } = await req.json();
-    let systemPrompt = "You are a poster designer. You are given a layout image and an asset image. Generate a poster based on the given layout and asset. Do not add any more information that is not given in the layout or asset. There is a layout blueprint image attached as well. Use that to guide the design. You do not have to follow the color choices of the layout, they are just there to distinguish the sections. There would also not be any space between the sections as depicted in the layout, it would be continuos.";
+    let systemPrompt = "You are an expert infographic poster designer. You are given a layout image, an asset image and content information. Generate a poster based on the given layout and asset. Do not add any more information that is not given in the layout or asset. There is a layout blueprint image attached as well. Use that to guide the design. You do not have to follow the color choices of the layout, they are just there to distinguish the sections. There would also not be any space between the sections as depicted in the layout, it would be continuos. Ensure that the design is visually appealing and the colors are consistent. Ensure that the transitions between the sections are smooth and the design is cohesive. Do not mention metadata such as section number, slot number, etc. in the design.";
     const effectivePrompt = promptText || prompt;
     if (!effectivePrompt && !assetImage) {
       return NextResponse.json({ error: "Provide a prompt or an asset image" }, { status: 400 });
