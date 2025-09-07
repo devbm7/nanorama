@@ -8,6 +8,8 @@ export interface PosterImageComponent {
   prompt: string;
   // Uploaded asset image chosen by the user
   assetUrl?: string;
+  // Original filename for UI display
+  assetName?: string;
   // Generated image URL (data URL or remote)
   generatedUrl?: string;
   slotIndex?: number;

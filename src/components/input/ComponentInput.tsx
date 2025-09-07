@@ -47,7 +47,7 @@ export function ComponentInput() {
               <button className="text-red-500 text-sm" onClick={() => removeComponent(c.id)}>Remove</button>
             </div>
             { c.type === "image" ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <label className="text-sm opacity-70">Slot</label>
                   <input
@@ -58,29 +58,48 @@ export function ComponentInput() {
                     onChange={(e) => updateComponent(c.id, { slotIndex: Number(e.target.value) })}
                   />
                 </div>
-                <input
-                  className="w-full border rounded p-2 bg-background"
-                  placeholder="Describe the image (prompt)"
-                  value={c.prompt}
-                  onChange={(e) => updateComponent(c.id, { prompt: e.target.value })}
-                />
-                <div className="flex items-center gap-3">
-                  <label className="text-sm opacity-70">Upload image (optional)</label>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <label className="text-sm opacity-70">Upload image</label>
                   <input
+                    id={`file-${c.id}`}
+                    className="hidden"
                     type="file"
                     accept="image/*"
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
                       const dataUrl = await fileToPngDataUrl(file);
-                      updateComponent(c.id, { assetUrl: dataUrl });
+                      updateComponent(c.id, { assetUrl: dataUrl, assetName: file.name });
                     }}
                   />
+                  <label
+                    htmlFor={`file-${c.id}`}
+                    className="px-3 py-2 rounded border cursor-pointer bg-secondary text-secondary-foreground hover:opacity-90"
+                  >
+                    Choose file
+                  </label>
+                  <span
+                    className="text-xs max-w-[220px] truncate"
+                    title={c.assetName || "No file chosen"}
+                  >
+                    {c.assetName || "No file chosen"}
+                  </span>
                 </div>
                 {c.assetUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.assetUrl} alt="uploaded" className="max-h-32 object-contain" />
+                  <div className="space-y-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={c.assetUrl} alt="uploaded" className="max-h-32 object-contain" />
+                  </div>
                 )}
+                <div className="space-y-1">
+                  <label className="text-xs opacity-70">Prompt (optional)</label>
+                  <input
+                    className="w-full border rounded p-2 bg-background"
+                    placeholder="Describe adjustments, style, or instructions"
+                    value={c.prompt}
+                    onChange={(e) => updateComponent(c.id, { prompt: e.target.value })}
+                  />
+                </div>
               </div>
             ) : (
               <div className="space-y-2">
