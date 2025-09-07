@@ -18,12 +18,16 @@ function SplitVertical({ components }: LayoutProps) {
   return (
     <div className="w-full h-full grid grid-cols-2 gap-4 p-6">
       <div className="space-y-4">
-        {components.filter((_, i) => i % 2 === 0).map((c) => (
+        {components
+          .filter((c: any) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 2 === 0))
+          .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
       <div className="space-y-4">
-        {components.filter((_, i) => i % 2 === 1).map((c) => (
+        {components
+          .filter((c: any) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 2 === 1))
+          .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
@@ -35,12 +39,16 @@ function SplitHorizontal({ components }: LayoutProps) {
   return (
     <div className="w-full h-full grid grid-rows-2 gap-4 p-6">
       <div className="space-y-4">
-        {components.filter((_, i) => i % 2 === 0).map((c) => (
+        {components
+          .filter((c: any) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 2 === 0))
+          .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
       <div className="space-y-4">
-        {components.filter((_, i) => i % 2 === 1).map((c) => (
+        {components
+          .filter((c: any) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 2 === 1))
+          .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
@@ -53,7 +61,9 @@ function TripleColumn({ components }: LayoutProps) {
     <div className="w-full h-full grid grid-cols-3 gap-4 p-6">
       {[0, 1, 2].map((col) => (
         <div key={col} className="space-y-4">
-          {components.filter((_, i) => i % 3 === col).map((c) => (
+          {components
+            .filter((c: any) => c.slotIndex === col || (c.slotIndex == null && components.indexOf(c) % 3 === col))
+            .map((c) => (
             <ComponentRenderer key={c.id} component={c} />
           ))}
         </div>
@@ -63,7 +73,8 @@ function TripleColumn({ components }: LayoutProps) {
 }
 
 function HeaderDual({ components }: LayoutProps) {
-  const [header, ...rest] = components;
+  const header = (components as any[]).find((c) => c.slotIndex === 0) || components[0];
+  const rest = components.filter((c) => c !== header);
   return (
     <div className="w-full h-full grid grid-rows-[2fr_3fr] gap-4 p-6">
       {header && <ComponentRenderer component={header} />}
@@ -79,8 +90,14 @@ function HeaderDual({ components }: LayoutProps) {
 function Grid2x2({ components }: LayoutProps) {
   return (
     <div className="w-full h-full grid grid-cols-2 grid-rows-2 gap-4 p-6">
-      {components.slice(0, 4).map((c) => (
-        <ComponentRenderer key={c.id} component={c} />
+      {[0, 1, 2, 3].map((slot) => (
+        <div key={slot}>
+          {components
+            .filter((c: any) => c.slotIndex === slot || (c.slotIndex == null && components.indexOf(c) === slot))
+            .map((c) => (
+              <ComponentRenderer key={c.id} component={c} />
+            ))}
+        </div>
       ))}
     </div>
   );
@@ -90,12 +107,16 @@ function HeroSidebar({ components }: LayoutProps) {
   return (
     <div className="w-full h-full grid grid-cols-[2fr_1fr] gap-4 p-6">
       <div className="space-y-4">
-        {components.filter((_, i) => i % 3 !== 2).map((c) => (
+        {components
+          .filter((c: any) => c.slotIndex === 0 || (c.slotIndex == null && components.indexOf(c) % 3 !== 2))
+          .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
       <div className="space-y-4">
-        {components.filter((_, i) => i % 3 === 2).map((c) => (
+        {components
+          .filter((c: any) => c.slotIndex === 1 || (c.slotIndex == null && components.indexOf(c) % 3 === 2))
+          .map((c) => (
           <ComponentRenderer key={c.id} component={c} />
         ))}
       </div>
@@ -111,11 +132,26 @@ export function ComponentRenderer({ component }: { component: PosterComponent })
       </div>
     );
   }
+  if (component.type === "infoCard") {
+    return (
+      <div className="border rounded p-4 space-y-2">
+        {component.title && <div className="font-semibold">{component.title}</div>}
+        <ul className="list-disc pl-5 space-y-1 text-sm">
+          {(component.bullets || []).map((b, i) => (
+            <li key={i}>{b}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
   return (
     <div className="border rounded p-2 flex items-center justify-center min-h-24 bg-white">
-      {component.url ? (
+      {component.generatedUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={component.url} alt={component.prompt} className="max-w-full max-h-80 object-contain" />
+        <img src={component.generatedUrl} alt={component.prompt} className="max-w-full max-h-80 object-contain" />
+      ) : component.assetUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={component.assetUrl} alt={component.prompt} className="max-w-full max-h-80 object-contain" />
       ) : (
         <div className="text-xs opacity-70">{component.prompt || "(No prompt)"}</div>
       )}

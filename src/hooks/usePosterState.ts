@@ -1,10 +1,6 @@
 import { create } from "zustand";
 import { nanoid } from "nanoid";
-import type {
-  PosterState,
-  PosterComponent,
-  LayoutTemplateId,
-} from "../types/poster";
+import type { PosterState, PosterComponent, LayoutTemplateId } from "../types/poster";
 
 interface PosterActions {
   setTitle: (title: string) => void;
@@ -12,6 +8,7 @@ interface PosterActions {
   setColorScheme: (scheme: string) => void;
   addTextComponent: (content?: string) => void;
   addImageComponent: (prompt?: string) => void;
+  addInfoCard: (title?: string, bullets?: string[]) => void;
   updateComponent: (id: string, update: Partial<PosterComponent>) => void;
   removeComponent: (id: string) => void;
   reset: () => void;
@@ -41,6 +38,13 @@ export const usePosterState = create<PosterState & PosterActions>((set) => ({
       components: [
         ...state.components,
         { id: nanoid(), type: "image", prompt },
+      ],
+    })),
+  addInfoCard: (title = "", bullets: string[] = []) =>
+    set((state) => ({
+      components: [
+        ...state.components,
+        { id: nanoid(), type: "infoCard", title, bullets },
       ],
     })),
   updateComponent: (id, update) =>

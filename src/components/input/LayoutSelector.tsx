@@ -1,6 +1,7 @@
 "use client";
 import { usePosterState } from "@/hooks/usePosterState";
 import type { LayoutTemplateId } from "@/types/poster";
+import { getLayoutSlots } from "@/lib/poster/slots";
 
 const layouts: { id: LayoutTemplateId; label: string }[] = [
   { id: "single", label: "Single" },
@@ -13,7 +14,7 @@ const layouts: { id: LayoutTemplateId; label: string }[] = [
 ];
 
 export function LayoutSelector() {
-  const { layout, setLayout } = usePosterState();
+  const { layout, setLayout, components, updateComponent } = usePosterState();
   return (
     <div className="flex gap-2 flex-wrap">
       {layouts.map((l) => (
@@ -25,6 +26,9 @@ export function LayoutSelector() {
           {l.label}
         </button>
       ))}
+      <div className="w-full pt-2 text-sm opacity-70">
+        Slots: {getLayoutSlots(layout).labels.join(", ")}
+      </div>
     </div>
   );
 }

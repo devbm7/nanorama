@@ -1,5 +1,5 @@
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 
 export async function exportElementToPdf(element: HTMLElement, filename = "poster.pdf") {
   const canvas = await html2canvas(element, {
