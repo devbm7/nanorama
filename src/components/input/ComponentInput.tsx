@@ -37,7 +37,6 @@ export function ComponentInput() {
   return (
     <div className="w-full space-y-4">
       <div className="flex gap-2">
-        <button className="border px-3 py-2 rounded" onClick={() => addTextComponent("")}>Add Text</button>
         <button className="border px-3 py-2 rounded" onClick={() => addImageComponent("")}>Add Image</button>
         <button className="border px-3 py-2 rounded" onClick={() => addInfoCard("", [""])}>Add InfoCard</button>
       </div>
