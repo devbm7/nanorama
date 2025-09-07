@@ -20,8 +20,8 @@ export function GenerateButton() {
 
   function buildPrompt(): string {
     const sections: string[] = [];
-    // Optionally include layout id
-    sections.push(`Layout: ${usePosterState.getState().layout}`);
+    const currentLayout = usePosterState.getState().layout;
+    sections.push(`Layout: ${currentLayout}`);
     // Image by slot (use the exact slot numbers set in the UI)
     const images = components.filter((c) => c.type === "image");
     const primaryImage = images.find((c: any) => c.assetUrl) || (images[0] as any);
@@ -44,6 +44,16 @@ export function GenerateButton() {
         card.bullets.filter(Boolean).forEach((b: string) => sections.push(`- ${b}`));
       }
     });
+    // Manual layout geometry (percent rectangles)
+    if (currentLayout === "manual") {
+      const slots = (usePosterState.getState().manualSlots || []).slice().sort((a, b) => a.index - b.index);
+      // if (slots.length) {
+      //   sections.push("Manual layout slots (percentages):");
+      //   slots.forEach((s) => {
+      //     sections.push(`Slot ${s.index}: x=${s.x}%, y=${s.y}%, w=${s.width}%, h=${s.height}%`);
+      //   });
+      // }
+    }
     // Include plain text components (optional future)
     return sections.join("\n");
   }
@@ -65,14 +75,10 @@ export function GenerateButton() {
       }
       
       const promptText = buildPrompt();
-      // capture blueprint
-      const blueprintEl = document.getElementById("layout-blueprint") as HTMLElement | null;
-      let layoutImage: string | undefined;
-      if (blueprintEl) {
-        const { default: html2canvas } = await import("html2canvas");
-        const canvas = await html2canvas(blueprintEl, { backgroundColor: "#ffffff", scale: 2, useCORS: true });
-        layoutImage = canvas.toDataURL("image/png");
-      }
+      // capture blueprint using canvas util to avoid CSS color parsing issues
+      const { renderBlueprintToDataUrl } = await import("@/lib/poster/blueprintCanvas");
+      const state = usePosterState.getState();
+      const layoutImage = renderBlueprintToDataUrl(state.layout as any, state.manualSlots as any);
 
       const res = await fetch("/api/generate-image", {
         method: "POST",

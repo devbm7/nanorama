@@ -34,13 +34,25 @@ export type LayoutTemplateId =
   | "triple-column"
   | "header-dual"
   | "grid-2x2"
-  | "hero-sidebar";
+  | "hero-sidebar"
+  | "manual";
+
+export interface ManualSlotRect {
+  id: string;
+  index: number; // user-visible slot number
+  // percentages 0-100 relative to the blueprint width/height
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export interface PosterState {
   title: string;
   layout: LayoutTemplateId;
   components: PosterComponent[];
   colorScheme: string;
+  manualSlots?: ManualSlotRect[];
 }
 
 

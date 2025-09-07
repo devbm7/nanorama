@@ -2,6 +2,7 @@
 import { usePosterState } from "@/hooks/usePosterState";
 import type { LayoutTemplateId } from "@/types/poster";
 import { getLayoutSlots } from "@/lib/poster/slots";
+import { ManualLayoutEditor } from "./ManualLayoutEditor";
 
 const layouts: { id: LayoutTemplateId; label: string }[] = [
   { id: "single", label: "Single" },
@@ -11,6 +12,7 @@ const layouts: { id: LayoutTemplateId; label: string }[] = [
   { id: "header-dual", label: "Header + Dual" },
   { id: "grid-2x2", label: "Grid 2x2" },
   { id: "hero-sidebar", label: "Hero + Sidebar" },
+  { id: "manual", label: "Manual" },
 ];
 
 export function LayoutSelector() {
@@ -29,6 +31,11 @@ export function LayoutSelector() {
       <div className="w-full pt-2 text-sm opacity-70">
         Slots: {getLayoutSlots(layout).labels.join(", ")}
       </div>
+      {layout === "manual" && (
+        <div className="w-full mt-2">
+          <ManualLayoutEditor />
+        </div>
+      )}
     </div>
   );
 }

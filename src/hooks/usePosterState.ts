@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { nanoid } from "nanoid";
-import type { PosterState, PosterComponent, LayoutTemplateId } from "../types/poster";
+import type { PosterState, PosterComponent, LayoutTemplateId, ManualSlotRect } from "../types/poster";
 
 interface PosterActions {
   setTitle: (title: string) => void;
@@ -11,6 +11,12 @@ interface PosterActions {
   addInfoCard: (title?: string, bullets?: string[]) => void;
   updateComponent: (id: string, update: Partial<PosterComponent>) => void;
   removeComponent: (id: string) => void;
+
+  setManualSlots: (slots: ManualSlotRect[]) => void;
+  addManualSlot: (slot: ManualSlotRect) => void;
+  updateManualSlot: (id: string, update: Partial<ManualSlotRect>) => void;
+  removeManualSlot: (id: string) => void;
+
   reset: () => void;
 }
 
@@ -19,6 +25,7 @@ const initialState: PosterState = {
   layout: "single",
   components: [],
   colorScheme: "default",
+  manualSlots: [],
 };
 
 export const usePosterState = create<PosterState & PosterActions>((set) => ({
@@ -51,6 +58,13 @@ export const usePosterState = create<PosterState & PosterActions>((set) => ({
     set((state) => ({
       components: state.components.filter((c) => c.id !== id),
     })),
+
+  setManualSlots: (slots) => set({ manualSlots: slots }),
+  addManualSlot: (slot) => set((s) => ({ manualSlots: [...(s.manualSlots || []), slot] })),
+  updateManualSlot: (id, update) =>
+    set((s) => ({ manualSlots: (s.manualSlots || []).map((r) => (r.id === id ? { ...r, ...update } : r)) })),
+  removeManualSlot: (id) => set((s) => ({ manualSlots: (s.manualSlots || []).filter((r) => r.id !== id) })),
+
   reset: () => set(initialState),
 }));
 
