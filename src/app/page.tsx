@@ -1,7 +1,7 @@
 import { ComponentInput } from "@/components/input/ComponentInput";
 import { LayoutSelector } from "@/components/input/LayoutSelector";
 import { GenerateButton } from "@/components/input/GenerateButton";
-import { PosterCanvas } from "@/components/poster/PosterCanvas";
+import { GeneratedOnly } from "@/components/poster/GeneratedOnly";
 import { ExportPanel } from "@/components/export/ExportPanel";
 
 export default function Home() {
@@ -24,9 +24,9 @@ export default function Home() {
           </div>
         </div>
         <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Poster</h2>
+          <h2 className="text-lg font-semibold">Generated</h2>
           <div id="poster-canvas-root">
-            <PosterCanvas />
+            <GeneratedOnly />
           </div>
         </div>
       </section>
